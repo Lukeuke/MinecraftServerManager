@@ -9,6 +9,51 @@
 
 <hr/>
 
-<div class="text-center">
+<div class="card">
+  <div class="card-header">
     Memory used by Java: @ViewBag.JavaMem Gb
+  </div>
+  <div class="card-body text-center">
+    <canvas class="my-4 h-25" id="chart" style="width:100%;max-width:350px"></canvas>
+  </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+let myChart = new Chart("chart", {
+  type: "pie",
+  data: {
+    labels: ['Max Ram Available', 'RAM used by Java'],
+    datasets: [{
+      label: 'Gb of Used RAM',
+      data: [@ViewBag.RestOfMemChart, @ViewBag.JavaMemChart],
+      borderWidth: 1,
+      backgroundColor: ['#F1C40F', '#27AE60'],
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Memory used by Java over Max RAM Memory'
+      }
+    }
+  },
+});
+
+</script>
+
+
+<style>
+  canvas {
+      display: block;
+      margin: 0 auto;
+  }
+</style>

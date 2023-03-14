@@ -8,11 +8,20 @@
     }
   },
   "profiles": {
+    "luke": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5261;",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:5261;http://192.168.1.107:80",
+      "applicationUrl": "http://localhost:5261;",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

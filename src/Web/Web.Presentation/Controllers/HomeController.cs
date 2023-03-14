@@ -23,6 +23,7 @@ public class HomeController : Controller
 
         double sumOfAllProcesses = 0;
         double javaMem = 0;
+
         foreach (var processes in all)
         {
             var procKey = processes.Key;
@@ -31,10 +32,11 @@ public class HomeController : Controller
             {
                 if (procKey.ToLower() == "java")
                 {
-
                     javaMem += proc.GetProcessMemorySize();
 
                     ViewData["JavaMem"] = Math.Round(DiagnosticHelper.ParsePagedMemorySizeToGb(javaMem), 1);
+
+                    ViewData["JavaMemChart"] = Math.Round(DiagnosticHelper.ParsePagedMemorySizeToGb(javaMem), 1).ToString().Replace(',', '.');
                 }
 
                 Console.WriteLine(
@@ -51,6 +53,10 @@ public class HomeController : Controller
 {Math.Round(DiagnosticHelper.ParsePagedMemorySizeToGb(javaMem), 1)} Gb
         ");
 
+        var diff = DiagnosticHelper.GetRamAmountMb() - DiagnosticHelper.ParsePagedMemorySizeToMb((long)javaMem);
+        
+        ViewData["RestOfMemChart"] = Math.Round((diff / 1024), 1).ToString().Replace(',', '.');
+        
         return View();
     }
 

@@ -6,15 +6,27 @@ namespace Web.Application;
 public static class DiagnosticHelper
 {
     /// <summary>
-    /// This method returns Ram memory in MB
+    /// This method returns Ram memory in GB
     /// </summary>
-    /// <returns>Size of memory in MB</returns>
+    /// <returns>Size of memory in GB</returns>
     public static double GetRamAmount()
     {
         var gcMemoryInfo = GC.GetGCMemoryInfo();
         var installedMemory = gcMemoryInfo.TotalAvailableMemoryBytes;
         
         return installedMemory / 1048576.0 / 1024;
+    }
+    
+    /// <summary>
+    /// This method returns Ram memory in Mb
+    /// </summary>
+    /// <returns>Size of memory in MB</returns>
+    public static double GetRamAmountMb()
+    {
+        var gcMemoryInfo = GC.GetGCMemoryInfo();
+        var installedMemory = gcMemoryInfo.TotalAvailableMemoryBytes;
+        
+        return installedMemory / 1048576.0;
     }
 
     /// <summary>
