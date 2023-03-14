@@ -32,15 +32,15 @@ public class HomeController : Controller
                 if (procKey.ToLower() == "java")
                 {
 
-                    javaMem += proc.GetProcessPagedMemorySize();
+                    javaMem += proc.GetProcessMemorySize();
 
                     ViewData["JavaMem"] = Math.Round(DiagnosticHelper.ParsePagedMemorySizeToGb(javaMem), 1);
                 }
 
                 Console.WriteLine(
-                    $"{proc.ProcessName} | {Math.Round(DiagnosticHelper.ParsePagedMemorySizeToMb(proc.GetProcessPagedMemorySize()), 1)} Mb");
+                    $"{proc.ProcessName} | {Math.Round(DiagnosticHelper.ParsePagedMemorySizeToMb(proc.GetProcessMemorySize()), 1)} Mb");
 
-                sumOfAllProcesses += proc.GetProcessPagedMemorySize();
+                sumOfAllProcesses += proc.GetProcessMemorySize();
             }
 
         }

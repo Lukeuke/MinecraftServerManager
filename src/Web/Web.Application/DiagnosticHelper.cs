@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Web.Application;
 
@@ -20,10 +21,10 @@ public static class DiagnosticHelper
     /// Gets pages memory size of running process
     /// </summary>
     /// <param name="proc">Process in System.Diagnostics</param>
-    /// <returns>PagedMemorySize64 as long value</returns>
-    public static long GetProcessPagedMemorySize(this Process proc)
+    /// <returns>Memory size of process as long value</returns>
+    public static long GetProcessMemorySize(this Process proc)
     {
-        return proc.PagedMemorySize64;
+        return IsUnix() ? proc.PrivateMemorySize64 : proc.PagedMemorySize64;
     }
     
     public static double ParsePagedMemorySizeToMb(long value)
@@ -39,5 +40,13 @@ public static class DiagnosticHelper
     public static double ParsePagedMemorySizeToGb(double value)
     {
         return value / 1073741824;
+    }
+    
+    private static bool IsUnix()
+    {
+        var isUnix = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
+                     RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+    
+        return isUnix;
     }
 }
