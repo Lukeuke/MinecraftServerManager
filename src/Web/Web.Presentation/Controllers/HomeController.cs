@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Web.Application;
 using Web.Presentation.Models;
 
 namespace Web.Presentation.Controllers;
@@ -15,6 +16,28 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        ViewData["TotalAvailableMemory"] = Math.Round(DiagnosticHelper.GetRamAmount(), 1);
+
+        var all = Process.GetProcesses().GroupBy(x => x.ProcessName);
+
+        double sumOfAllProcesses = 0;
+        foreach (var processes in all)
+        {
+            var procKey = processes.Key;
+
+            foreach (var proc in processes)
+            {
+                if (procKey.ToLower() == "java")
+                {
+                }
+
+                sumOfAllProcesses += proc.GetProcessPagedMemorySize();
+            }
+            
+        }
+
+        ViewData["TotalAllocatedMemory"] = Math.Round(DiagnosticHelper.ParsePagedMemorySizeToGb(sumOfAllProcesses), 1);
+        
         return View();
     }
 
