@@ -14,17 +14,19 @@ public class HomeController : Controller
     {
         _logger = logger;
         _memoryInfoUpdater = memoryInfoUpdater;
-    }
-
-    public IActionResult Index()
-    {
-        new Thread(() => 
+        
+        /*new Thread(() => 
         {
             Thread.CurrentThread.IsBackground = true;
             
             _memoryInfoUpdater.Update();
-        }).Start();
-        
+            
+            _logger.LogInformation("Thread started");
+        }).Start();*/
+    }
+
+    public IActionResult Index()
+    {
         ViewData["TotalAvailableMemory"] = Math.Round(DiagnosticHelper.GetRamAmount(), 1);
 
         _logger.LogInformation("======LIST OF ALL PROCESSES======");
@@ -52,16 +54,19 @@ public class HomeController : Controller
                 {
                     restMem += proc.GetProcessMemorySize();
                 }
+                
 
-
-                Console.WriteLine(
-                    $"{proc.ProcessName} | {Math.Round(DiagnosticHelper.ParsePagedMemorySizeToMb(proc.GetProcessMemorySize()), 1)} Mb");
+                //Console.WriteLine($"{proc.ProcessName} | {Math.Round(DiagnosticHelper.ParsePagedMemorySizeToMb(proc.GetProcessMemorySize()), 1)} Mb");
 
                 sumOfAllProcesses += proc.GetProcessMemorySize();
             }
 
         }
 
+        var maxRam = Math.Round(DiagnosticHelper.GetRamAmount(), 1);
+        var restMemPrec = Math.Round(DiagnosticHelper.ParsePagedMemorySizeToGb(restMem + javaMem), 1) * 100 / maxRam; 
+        _memoryInfoUpdater.MemoryUsage.Add(restMemPrec);
+        
         ViewData["TotalAllocatedMemory"] = Math.Round(DiagnosticHelper.ParsePagedMemorySizeToGb(sumOfAllProcesses), 1);
 
         _logger.LogInformation(@$"======JAVA MEMORY USAGE======
@@ -72,6 +77,9 @@ public class HomeController : Controller
 
         ViewData["RestOfMemChart"] = Math.Round(restMem, 1).ToString().Replace(',', '.');
         ViewData["FreeMemory"] = Math.Round(DiagnosticHelper.GetRamAmount() - restMem - DiagnosticHelper.ParsePagedMemorySizeToGb(javaMem), 1).ToString().Replace(',', '.');;
+
+        ViewData["RamCount"] = _memoryInfoUpdater.MemCount;
+        ViewData["RamData"] = MemoryUsageGraphHelper.DataLabels(_memoryInfoUpdater.MemoryUsage).Item1;
         
         return View();
     }

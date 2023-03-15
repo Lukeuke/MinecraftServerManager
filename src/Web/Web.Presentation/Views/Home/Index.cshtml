@@ -7,6 +7,16 @@
     @ViewBag.TotalAllocatedMemory / @ViewBag.TotalAvailableMemory GB
 </div>
 
+
+<div class="card">
+  <div class="card-header">
+    Memory
+  </div>
+  <div class="card-body text-center">
+    <canvas class="my-4 h-25" id="ram_usage" style="width:100%;max-width:550px"></canvas>
+  </div>
+</div>
+
 <hr/>
 
 <div class="card">
@@ -46,6 +56,72 @@ let myChart = new Chart("chart", {
       }
     }
   },
+});
+
+@{
+  var _labelsCount = ViewBag.RamCount;
+}
+
+const logNumbers = (count) => {
+  const data = [];
+
+  for (let i = 0; i < count; ++i) {
+    data.push(i);
+  }
+
+  return data;
+};
+
+let ram_usage = new Chart("ram_usage", {
+ type: 'line',
+ data: {
+   labels: logNumbers(60),
+   datasets: [
+     {
+       label: 'Ram usage %',
+       data: @ViewBag.RamData,
+       borderColor: '#023047',
+       backgroundColor: '#023047',
+     }
+   ]
+ },
+ options: {
+   responsive: true,
+   plugins: {
+     tooltip: {
+       mode: 'index',
+       intersect: false
+     },
+     title: {
+       display: true,
+       text: 'Memory usage'
+     }
+   },
+   hover: {
+     mode: 'index',
+     intersec: false
+   },
+   scales: {
+     x: {
+       title: {
+         display: true,
+         text: 'Time (10s)'
+       }
+     },
+     y: {
+       title: {
+         display: true,
+         text: '%'
+       },
+       min: 0,
+       max: 100,
+       ticks: {
+         // forces step size to be 50 units
+         stepSize: 50
+       }
+     }
+   }
+ },
 });
 
 </script>
