@@ -1,7 +1,10 @@
+using Web.Application;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<MemoryInfoUpdater>();
 
 var app = builder.Build();
 

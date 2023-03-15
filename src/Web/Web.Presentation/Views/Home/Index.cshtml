@@ -25,12 +25,12 @@
 let myChart = new Chart("chart", {
   type: "pie",
   data: {
-    labels: ['Max Ram Available', 'RAM used by Java'],
+    labels: ['RAM used by other processes', 'RAM used by Java', 'Free Memory'],
     datasets: [{
       label: 'Gb of Used RAM',
-      data: [@ViewBag.RestOfMemChart, @ViewBag.JavaMemChart],
+      data: [@ViewBag.RestOfMemChart, @ViewBag.JavaMemChart, @ViewBag.FreeMemory],
       borderWidth: 1,
-      backgroundColor: ['#F1C40F', '#27AE60'],
+      backgroundColor: ['#219ebc', '#fb8500', '#023047'],
     }]
   },
   options: {
@@ -42,7 +42,7 @@ let myChart = new Chart("chart", {
       },
       title: {
         display: true,
-        text: 'Memory used by Java over Max RAM Memory'
+        text: 'Memory used by Java over Max RAM Memory and Free Memory'
       }
     }
   },

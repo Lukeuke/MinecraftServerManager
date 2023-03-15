@@ -8,14 +8,23 @@ namespace Web.Presentation.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly MemoryInfoUpdater _memoryInfoUpdater;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, MemoryInfoUpdater memoryInfoUpdater)
     {
         _logger = logger;
+        _memoryInfoUpdater = memoryInfoUpdater;
     }
 
     public IActionResult Index()
     {
+        new Thread(() => 
+        {
+            Thread.CurrentThread.IsBackground = true;
+            
+            _memoryInfoUpdater.Update();
+        }).Start();
+        
         ViewData["TotalAvailableMemory"] = Math.Round(DiagnosticHelper.GetRamAmount(), 1);
 
         _logger.LogInformation("======LIST OF ALL PROCESSES======");
@@ -23,6 +32,7 @@ public class HomeController : Controller
 
         double sumOfAllProcesses = 0;
         double javaMem = 0;
+        double restMem = 0;
 
         foreach (var processes in all)
         {
@@ -38,6 +48,11 @@ public class HomeController : Controller
 
                     ViewData["JavaMemChart"] = Math.Round(DiagnosticHelper.ParsePagedMemorySizeToGb(javaMem), 1).ToString().Replace(',', '.');
                 }
+                else 
+                {
+                    restMem += proc.GetProcessMemorySize();
+                }
+
 
                 Console.WriteLine(
                     $"{proc.ProcessName} | {Math.Round(DiagnosticHelper.ParsePagedMemorySizeToMb(proc.GetProcessMemorySize()), 1)} Mb");
@@ -53,9 +68,10 @@ public class HomeController : Controller
 {Math.Round(DiagnosticHelper.ParsePagedMemorySizeToGb(javaMem), 1)} Gb
         ");
 
-        var diff = DiagnosticHelper.GetRamAmountMb() - DiagnosticHelper.ParsePagedMemorySizeToMb((long)javaMem);
-        
-        ViewData["RestOfMemChart"] = Math.Round((diff / 1024), 1).ToString().Replace(',', '.');
+        restMem = DiagnosticHelper.ParsePagedMemorySizeToGb(restMem);
+
+        ViewData["RestOfMemChart"] = Math.Round(restMem, 1).ToString().Replace(',', '.');
+        ViewData["FreeMemory"] = Math.Round(DiagnosticHelper.GetRamAmount() - restMem - DiagnosticHelper.ParsePagedMemorySizeToGb(javaMem), 1).ToString().Replace(',', '.');;
         
         return View();
     }
